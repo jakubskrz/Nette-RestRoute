@@ -9,14 +9,16 @@ use Nette\Application\Request;
 use Nette\Http\IRequest;
 use Nette\Http\Url;
 use Nette\InvalidStateException;
-use Nette\Object;
+use Nette\SmartObject;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
 /**
  * @author Adam Štipák <adam.stipak@gmail.com>
  */
-class RestRoute extends Object implements IRouter {
+class RestRoute implements IRouter {
+
+  use SmartObject;
 
   const METHOD_OVERRIDE_HTTP_HEADER = 'X-HTTP-Method-Override';
   /** @deprecated */
@@ -95,7 +97,7 @@ class RestRoute extends Object implements IRouter {
    * @param \Nette\Http\IRequest $httpRequest
    * @return \Nette\Application\Request|NULL
    */
-  public function match(IRequest $httpRequest) {
+  public function match(IRequest $httpRequest): ?Request {
     $url = $httpRequest->getUrl();
     $basePath = Strings::replace($url->getBasePath(), '/\//', '\/');
     $cleanPath = Strings::replace($url->getPath(), "/^{$basePath}/");
@@ -253,7 +255,7 @@ class RestRoute extends Object implements IRouter {
    * @throws \Nette\InvalidStateException
    * @return string|NULL
    */
-  public function constructUrl(Request $appRequest, Url $refUrl) {
+  public function constructUrl(Request $appRequest, Url $refUrl): ?string {
     // Module prefix not match.
     if($this->module && !Strings::startsWith($appRequest->getPresenterName(), $this->module)) {
       return NULL;
